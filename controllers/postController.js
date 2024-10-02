@@ -13,6 +13,16 @@ class PostController {
 		const posts = await db.query("select * from post where user_id = $1", [id]);
 		res.json(posts.rows);
 	}
+	async getPublicPosts(req, res) {
+		try {
+			const posts = await db.query(
+				"select * from post where protected = false"
+			);
+			res.status(200).json(posts.rows);
+		} catch (err) {
+			res.status(500).json("Error on server");
+		}
+	}
 }
 
 module.exports = new PostController();

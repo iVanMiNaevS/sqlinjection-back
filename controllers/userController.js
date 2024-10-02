@@ -3,11 +3,41 @@ const db = require("../db");
 class UserController {
 	async createUser(req, res) {
 		const { name, surname } = req.body;
-		const newPerson = await db.query(
-			"INSERT INTO person (name, surname) values ($1, $2) RETURNING *",
-			[name, surname]
-		);
-		res.json(newPerson.rows[0]);
+		try {
+			const user = await db.query(
+				"SELECt * from person where name = $1 and surname = $2",
+				[name, surname]
+			);
+			if (user.rows.length !== 0) {
+				return res
+					.status(400)
+					.json({ error: "Такой пользователь уже зарегестрирован" });
+			}
+			const newPerson = await db.query(
+				"INSERT INTO person (name, surname) values ($1, $2) RETURNING *",
+				[name, surname]
+			);
+			res.status(200).json(newPerson.rows[0]);
+		} catch (err) {
+			res.status(500).josn("Error on server");
+		}
+	}
+	async login(req, res) {
+		const { name, surname } = req.body;
+		try {
+			const user = await db.query(
+				"SELECt * from person where name = $1 and surname = $2",
+				[name, surname]
+			);
+			if (user.rows.length === 0) {
+				return res
+					.status(400)
+					.json({ error: "Такой пользователь не зарегестрирован" });
+			}
+			res.status(200).json(user.rows[0]);
+		} catch (error) {
+			res.status(500).josn("Error on server");
+		}
 	}
 	async getUsers(req, res) {
 		const users = await db.query("SELECT * FROM person");
