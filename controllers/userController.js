@@ -43,10 +43,14 @@ class UserController {
 		const users = await db.query("SELECT * FROM person");
 		res.json(users.rows);
 	}
-	async getOneUser(req, res) {
-		const id = req.params.id;
-		const users = await db.query("SELECT * FROM person where id = $1", [id]);
-		res.json(users.rows[0]);
+	async getOneUserById(req, res) {
+		const { id } = req.body;
+		try {
+			const users = await db.query("SELECT * FROM person where id = $1", [id]);
+			res.status(200).json(users.rows[0]);
+		} catch (error) {
+			res.status(500).json({ message: error.message });
+		}
 	}
 	async updateUser(req, res) {
 		const { id, name, surname } = req.body;
