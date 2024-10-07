@@ -8,7 +8,9 @@ const postController = require("./controllers/postController");
 app.use(cors());
 app.use(express.json());
 
-app.get("/posts/get", postController.getPosts);
+app.get("/post/get", postController.getPosts);
+app.post("/post/getOne", postController.getOnePost);
+app.put("/post/update", postController.updatePost);
 app.post("/post/create", postController.createPost);
 app.get("/post/getByUser", postController.getPostsByUser);
 app.get("/post/getUserPosts", postController.getUserPosts);
